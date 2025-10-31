@@ -1,0 +1,26 @@
+{
+  "name": "email-reminder-worker",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A scheduled email reminder system running on Cloudflare Workers",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "db:init": "wrangler d1 execute email-reminders --file=./schema.sql",
+    "db:local": "wrangler d1 execute email-reminders --local --file=./schema.sql"
+  },
+  "keywords": [
+    "cloudflare",
+    "workers",
+    "email",
+    "reminder",
+    "cron"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^4.45.3"
+  }
+}

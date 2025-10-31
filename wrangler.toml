@@ -1,0 +1,29 @@
+name = "email-reminder-worker"
+main = "src/worker.js"
+compatibility_date = "2024-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Text-based assets configuration
+[[rules]]
+type = "Text"
+globs = ["**/*.html", "**/*.css", "**/*.js"]
+fallthrough = true
+
+# Cron trigger - runs every day at 9:00 AM UTC
+[triggers]
+crons = ["0 9 * * *"]
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "email-reminders"
+database_id = "32728b27-2b1e-4f85-b725-3f574e5ed09e"
+
+# Environment variables (set via: wrangler secret put <KEY>)
+# Required secrets:
+# - EMAIL_API_KEY: Your email service API key (MailChannels or Resend)
+# - EMAIL_FROM: Sender email address
+# - ADMIN_TOKEN: Token for authenticating API requests
+
+[vars]
+EMAIL_SERVICE = "brevo"  # or "resend" or "mailchannels"

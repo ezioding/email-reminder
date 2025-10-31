@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邮件提醒管理系统</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📧 邮件提醒管理系统</h1>
+            <p class="subtitle">定期提醒，从不遗忘</p>
+        </header>
+
+        <!-- 主界面 -->
+        <div id="mainPanel">
+            <!-- 添加提醒表单 -->
+            <div class="panel">
+                <h2>➕ 添加新提醒</h2>
+                <form id="addReminderForm" onsubmit="addReminder(event)">
+                    <!-- 提醒类型选择 -->
+                    <div class="form-group">
+                        <label>提醒类型 *</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="reminderType" value="recurring" checked onchange="toggleReminderType()">
+                                <span>循环提醒</span>
+                                <small>按固定间隔重复发送</small>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="reminderType" value="onetime" onchange="toggleReminderType()">
+                                <span>一次性提醒</span>
+                                <small>仅在指定时间发送一次</small>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="title">提醒标题 *</label>
+                            <input type="text" id="title" required placeholder="例如: 登录 DigitalPlat">
+                        </div>
+                        <div class="form-group" id="intervalDaysGroup">
+                            <label for="intervalDays">间隔天数 *</label>
+                            <input type="number" id="intervalDays" min="1" placeholder="180">
+                        </div>
+                        <div class="form-group" id="scheduledTimeGroup" style="display: none;">
+                            <label for="scheduledTime">提醒时间 *</label>
+                            <input type="datetime-local" id="scheduledTime">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">提醒内容 *</label>
+                        <textarea id="description" required rows="3" placeholder="请登录 DigitalPlat 网站，避免账号过期"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="url">相关链接</label>
+                            <input type="url" id="url" placeholder="https://example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="targetEmail">接收邮箱 *</label>
+                            <input type="email" id="targetEmail" required placeholder="your-email@gmail.com">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">创建提醒</button>
+                    <div id="addError" class="error-message"></div>
+                    <div id="addSuccess" class="success-message"></div>
+                </form>
+            </div>
+
+            <!-- 提醒列表 -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>📋 我的提醒列表</h2>
+                    <button onclick="loadReminders()" class="btn btn-secondary">🔄 刷新</button>
+                </div>
+
+                <div id="remindersLoading" class="loading">加载中...</div>
+                <div id="remindersError" class="error-message"></div>
+                <div id="remindersList"></div>
+            </div>
+
+            <!-- 手动触发 -->
+            <div class="panel">
+                <h2>🚀 手动触发检查</h2>
+                <p>立即检查所有到期的提醒并发送邮件</p>
+                <button onclick="manualCheck()" class="btn btn-warning">立即检查</button>
+                <div id="checkResult" style="margin-top: 15px;"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 编辑模态框 -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ 编辑提醒</h2>
+                <span class="close" onclick="closeEditModal()">&times;</span>
+            </div>
+            <form id="editReminderForm" onsubmit="updateReminder(event)">
+                <input type="hidden" id="editId">
+                <input type="hidden" id="editIsOneTime">
+
+                <!-- 提醒类型显示（只读） -->
+                <div class="form-group">
+                    <label>提醒类型</label>
+                    <div id="editReminderType" style="padding: 12px; background: #f8f9fa; border-radius: 8px; color: #666;">
+                        <!-- 动态填充 -->
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editTitle">提醒标题 *</label>
+                        <input type="text" id="editTitle" required>
+                    </div>
+                    <div class="form-group" id="editIntervalDaysGroup">
+                        <label for="editIntervalDays">间隔天数 *</label>
+                        <input type="number" id="editIntervalDays" min="1">
+                    </div>
+                    <div class="form-group" id="editScheduledTimeGroup" style="display: none;">
+                        <label for="editScheduledTime">提醒时间 *</label>
+                        <input type="datetime-local" id="editScheduledTime">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editDescription">提醒内容 *</label>
+                    <textarea id="editDescription" required rows="3"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editUrl">相关链接</label>
+                        <input type="url" id="editUrl">
+                    </div>
+                    <div class="form-group">
+                        <label for="editTargetEmail">接收邮箱 *</label>
+                        <input type="email" id="editTargetEmail" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" onclick="closeEditModal()" class="btn btn-secondary">取消</button>
+                    <button type="submit" class="btn btn-primary">保存修改</button>
+                </div>
+                <div id="editError" class="error-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/app.js"></script>
+</body>
+</html>

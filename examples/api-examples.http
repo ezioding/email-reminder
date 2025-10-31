@@ -1,0 +1,77 @@
+### Email Reminder Worker API Examples
+### 使用 VS Code REST Client 插件或 IntelliJ IDEA HTTP Client
+
+@baseUrl = https://your-worker.workers.dev
+@token = your-admin-token
+
+### 1. Get API Info
+GET {{baseUrl}}/
+Authorization: Bearer {{token}}
+
+### 2. List All Reminders
+GET {{baseUrl}}/reminders
+Authorization: Bearer {{token}}
+
+### 3. Get Specific Reminder
+GET {{baseUrl}}/reminders/1
+Authorization: Bearer {{token}}
+
+### 4. Create New Reminder
+POST {{baseUrl}}/reminders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "登录 DigitalPlat",
+  "description": "请登录 DigitalPlat 网站",
+  "url": "https://dash.domain.digitalplat.org/",
+  "target_email": "liudingandxiao@gmail.com",
+  "interval_days": 180
+}
+
+### 5. Create Another Reminder (Example 2)
+POST {{baseUrl}}/reminders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "续费域名",
+  "description": "请检查并续费域名",
+  "url": "https://domain-registrar.com",
+  "target_email": "admin@example.com",
+  "interval_days": 365
+}
+
+### 6. Update Reminder (Change interval)
+PUT {{baseUrl}}/reminders/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "interval_days": 90
+}
+
+### 7. Update Reminder (Change multiple fields)
+PUT {{baseUrl}}/reminders/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "登录 DigitalPlat (更新)",
+  "description": "请及时登录 DigitalPlat 网站，避免账号过期",
+  "interval_days": 90
+}
+
+### 8. Toggle Reminder (Enable/Disable)
+POST {{baseUrl}}/reminders/1/toggle
+Authorization: Bearer {{token}}
+
+### 9. Manual Check (Trigger reminder processing)
+POST {{baseUrl}}/check
+Authorization: Bearer {{token}}
+
+### 10. Delete Reminder
+DELETE {{baseUrl}}/reminders/1
+Authorization: Bearer {{token}}
+
+###

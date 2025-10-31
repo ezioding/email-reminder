@@ -1,0 +1,11 @@
+# Local development environment variables
+# Copy this file to .dev.vars and fill in your values
+
+# Admin authentication token for API requests
+ADMIN_TOKEN=your-secret-token-here
+
+# Email service to use: "mailchannels" or "resend"
+EMAIL_SERVICE=mailchannels
+
+# For Resend (if using)
+# EMAIL_API_KEY=re_xxxxx
