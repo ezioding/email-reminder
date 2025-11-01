@@ -9,9 +9,9 @@ type = "Text"
 globs = ["**/*.html", "**/*.css", "**/*.js"]
 fallthrough = true
 
-# Cron trigger - runs every day at 9:00 AM UTC
+# Cron trigger - runs every 15 minutes
 [triggers]
-crons = ["0 9 * * *"]
+crons = ["*/15 * * * *"]
 
 # D1 Database binding
 [[d1_databases]]
